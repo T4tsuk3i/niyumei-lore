@@ -13,6 +13,24 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
+
+// Flat, chronological order across every age → for prev/next
+const AGE_ORDER = [
+  'The First Ocean',
+  'The Churning',
+  'The Drowning',
+  'The Great Forgetting',
+  'The Present',
+];
+const all = await getCollection('lore');
+all.sort(
+  (a, b) =>
+    AGE_ORDER.indexOf(a.data.age) - AGE_ORDER.indexOf(b.data.age) ||
+    (a.data.order ?? 99) - (b.data.order ?? 99)
+);
+const idx = all.findIndex((e) => e.id === entry.id);
+const prev = idx > 0 ? all[idx - 1] : null;
+const next = idx < all.length - 1 ? all[idx + 1] : null;
 ---
 
 <Layout title={entry.data.title} description={entry.data.description}>
@@ -39,4 +57,20 @@ const { Content } = await render(entry);
     )
   }
   <Content />
+  <hr />
+  <p style="font-size:0.85rem;color:var(--ink-dim);font-family:var(--sans);text-transform:uppercase;letter-spacing:0.12em">
+    Category: {entry.data.age} · {entry.id.split('/')[0]}
+  </p>
+  <nav class="entry-nav" style="display:flex;justify-content:space-between;gap:2rem;margin-top:1rem">
+    <div>
+      {prev && (
+        <a href={`/lore/${prev.id}`}>← {prev.data.title}</a>
+      )}
+    </div>
+    <div style="text-align:right">
+      {next && (
+        <a href={`/lore/${next.id}`}>{next.data.title} →</a>
+      )}
+    </div>
+  </nav>
 </Layout>
