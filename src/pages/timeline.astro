@@ -1,0 +1,26 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+const entries = (await getCollection('timeline')).sort(
+  (a, b) => a.data.era - b.data.era
+);
+
+const rendered = await Promise.all(
+  entries.map(async (entry) => ({ entry, Content: (await render(entry)).Content }))
+);
+---
+
+<Layout title="Timeline">
+  <h1>Timeline</h1>
+  <p class="description">The memories of the world, in the order they were lost.</p>
+  {
+    rendered.map(({ entry, Content }) => (
+      <div class="timeline-entry">
+        <h2>{entry.data.title}</h2>
+        {entry.data.summary && <p>{entry.data.summary}</p>}
+        <Content />
+      </div>
+    ))
+  }
+</Layout>

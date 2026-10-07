@@ -1,0 +1,64 @@
+---
+import '../styles/global.css';
+import { getCollection } from 'astro:content';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+
+const lore = await getCollection('lore');
+
+// Group lore pages by their top-level folder (prehistory, world, ...)
+const sections = new Map<string, typeof lore>();
+for (const entry of lore) {
+  const section = entry.id.split('/')[0];
+  if (!sections.has(section)) sections.set(section, []);
+  sections.get(section)!.push(entry);
+}
+for (const list of sections.values()) {
+  list.sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} — Niyumei Lore</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="page">
+      <aside class="sidebar">
+        <a class="site-title" href="/">NIYUMEI</a>
+        <nav>
+          <a class="nav-top" href="/lore">The Archive</a>
+          <a class="nav-top" href="/timeline">Timeline</a>
+          {
+            [...sections.entries()].map(([section, entries]) => (
+              <div class="nav-section">
+                <span class="nav-section-title">{section}</span>
+                {entries.map((entry) => (
+                  <a href={`/lore/${entry.id}`}>{entry.data.title}</a>
+                ))}
+              </div>
+            ))
+          }
+        </nav>
+      </aside>
+      <main class="content">
+        <slot />
+      </main>
+    </div>
+  </body>
+</html>
