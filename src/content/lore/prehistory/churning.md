@@ -2,6 +2,7 @@
 title: The Mahā-Manthana
 description: The Great Churning — when the mechanism failed
 order: 4
+image: ../../../images/Serpent of the Maelstrom Mountain.png
 ---
 
 The Firstborn constructed an impossible machine. Or perhaps it wasn't a machine. Perhaps it was a mountain. Perhaps it was both.

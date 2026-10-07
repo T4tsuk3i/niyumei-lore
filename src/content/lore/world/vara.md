@@ -2,6 +2,7 @@
 title: Vāra
 description: The hidden refuges — massive underground sanctuaries built around Kuns
 order: 2
+image: ../../../images/The Luminous Underground Sanctuary.png
 ---
 
 The survivors built **Vāra**. Not one. Hundreds.

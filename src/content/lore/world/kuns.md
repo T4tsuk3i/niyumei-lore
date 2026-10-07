@@ -2,6 +2,7 @@
 title: Kuns
 description: Scars left by the Churning — small bodies of water infused with Amṛta
 order: 1
+image: ../../../images/Bioluminescent Sanctuary Grotto.png
 ---
 
 The flood eventually receded, but small pockets of Amṛta had fallen into the world. Wherever they accumulated, life could survive.

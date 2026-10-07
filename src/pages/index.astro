@@ -1,5 +1,8 @@
 ---
 import '../styles/global.css';
+import { Image } from 'astro:assets';
+import heroImg from '../images/hero.png';
+import seal from '../images/Mystical Neon Wave Moon Emblem.png';
 ---
 
 <!doctype html>
@@ -8,6 +11,7 @@ import '../styles/global.css';
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Niyumei — The Churning</title>
+    <link rel="icon" type="image/png" href="/seal.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -17,11 +21,15 @@ import '../styles/global.css';
   </head>
   <body>
     <div class="landing">
-      <h1>THE CHURNING</h1>
-      <p class="tagline">
-        "The sea did not rise. The world descended into it."
-      </p>
-      <a class="begin" href="/lore">BEGIN</a>
+      <Image class="landing-bg" src={heroImg} alt="" />
+      <div class="landing-inner">
+        <Image class="landing-seal" src={seal} alt="Niyumei seal" />
+        <h1>THE CHURNING</h1>
+        <p class="tagline">
+          "The sea did not rise. The world descended into it."
+        </p>
+        <a class="begin" href="/lore">BEGIN</a>
+      </div>
     </div>
   </body>
 </html>

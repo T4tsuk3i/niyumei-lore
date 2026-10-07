@@ -2,6 +2,7 @@
 title: Ādi-Sāgara
 description: The First Ocean — the primordial medium from which reality condensed
 order: 1
+image: ../../../images/adi-sagara.png
 ---
 
 Before Earth had oceans, mountains or people, there was only what the oldest surviving fragments call:

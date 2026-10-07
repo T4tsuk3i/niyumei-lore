@@ -1,6 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
+import mural from '../../images/Mystical Teal Wave-Ruin Mural.png';
 
 const lore = await getCollection('lore');
 
@@ -16,6 +18,11 @@ for (const list of sections.values()) {
 ---
 
 <Layout title="The Archive">
+  <Image
+    src={mural}
+    alt="Mural of the Churning"
+    style="width:100%;max-width:42rem;border-radius:8px;margin-bottom:2rem"
+  />
   <h1>The Archive</h1>
   <p class="description">What remains of the world before the flood.</p>
   {

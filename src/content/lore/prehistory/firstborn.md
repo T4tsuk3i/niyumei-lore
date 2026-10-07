@@ -2,6 +2,7 @@
 title: The Firstborn
 description: The beings that came before humanity
 order: 2
+image: ../../../images/Titans of the Flooded Void.png
 ---
 
 The oldest civilizations told different stories about the beings that came before humanity.

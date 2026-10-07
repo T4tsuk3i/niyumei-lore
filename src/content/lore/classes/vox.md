@@ -2,6 +2,7 @@
 title: Vox
 description: Those who move through the altered world — affinity, Glow
 order: 1
+image: ../../../images/Hooded Traveler in Flooded Ruins.png
 ---
 
 Vox are those who learned to move through the altered world. Scouts. Pathfinders. Hunters. Explorers.

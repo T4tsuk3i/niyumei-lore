@@ -3,11 +3,13 @@ import { glob } from 'astro/loaders';
 
 const lore = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/lore' }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string().optional(),
-    order: z.number().default(99),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      description: z.string().optional(),
+      order: z.number().default(99),
+      image: image().optional(),
+    }),
 });
 
 const timeline = defineCollection({
