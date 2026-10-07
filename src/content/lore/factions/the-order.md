@@ -7,19 +7,18 @@ quote: "When the waters begin to move without wind, the Churning has awakened."
 author: Oldest Warning of the Order
 ---
 
-The Order knows more than ordinary people. But even the Order doesn't know everything.
+The Order has no flag, no gate, no chairman. What it has is a library, and the library is called the sanctuary, and the sanctuary was already built when the Order inherited it. The Order claims to run the schools, which is mostly true, to run the water, which is true some afternoons, and to know more than it is saying, which no one has ever had the nerve to argue with.
 
-They interpret the world through their oldest records. Among them, a warning nobody understands the full weight of:
+Every gatehouse has a membership, which is to say list, on a spring board at the warden: the pensioner who keeps the weight-measure of the reservoir; the water-weaver still apprenticing at the wrong age; the old woman with the mason's brand who writes with the same hand she hits walls with; three boys with no heart; and whatever reader has worked through the first-third survey of the third-layer index this week. Ordinary people get overlain by the Order every day of their lives, and they have stopped noticing. The Order counts this as a win.
+
+## The warning
+
+The third page of its most-copied instruction runs:
 
 > **"When the waters begin to move without wind, the Churning has awakened."**
 
-The Guardians interpret this as metaphor. The Order does not.
+The Guardians hear this as a metaphor and are content to do so. The Order's graduates do not forget to notice that the sweep schedule on the inner wells has begun to include *night*, specifically every three nights in season, when the weather is still.
 
-## What they watch
+And the other piece they put on the desk, the piece no one holds the description of out loud: records from every well, across the world, across the age, rise a little together, at the same rate, in the same quarter, as if the county is breathing. The register of measurements has two columns, and the second one has been struck through by the previous three archivists, in seats that passed them on. Each entry still reads the same steady number.
 
-- the water level beneath their Kun
-- the frequency of glowing particles
-- the growing number of people developing abilities
-- the occasional thing that comes out of the water
-
-> The Order does not believe in gods. It believes in records. That is why it is dangerous.
+> What the Order will not write down — and what the archivist can tell you, if the evening is quiet and the lighter is lit — is that the ticking in the wells is becoming a call. At the upper end, the numbers now come in groups of five. The observers who have listened have agreed between themselves that the groups sound similar to the old dialectic the sanctuary lost after the Drowning. Specifically the sentence: *we hear you.*

@@ -8,16 +8,12 @@ quote: "Amṛta is not deathless. You are. Amṛta only borrows you back."
 author: Sūtra of Varna, the Undying Fragment
 ---
 
-Eventually, the Firstborn discovered something within Ādi-Sāgara. A substance. Not merely immortality — it was **potential itself**. The ability for reality to renew itself.
+Ask a hundred priests what would be found in the heart of the First Ocean, and you will collect a hundred soft answers — *life*, *light*, *the seed of all things* — and none of them will be wrong, and none of them will be specific enough.
 
-They called it:
+What was down there, according to those who later claimed to have touched it, was called **Amṛta**.
 
-# AMṚTA
+Our word for it — *elixir of immortality* — is a lie told by people who missed the point on the way home. Amṛta was never a drink and never a treasure. It was the principle by which the world keeps starting over: the spark that makes the broken heal, the rain outliving the riverbed, the morning after the shipwreck. **Potential itself.** The raw argument from disorder to possibility.
 
-*The Deathless.*
+The Firstborn read it the way you would read a weapon's handle. *If we can pour enough of this into ourselves, we stop being limited by keeping alive. We become unlimited. We become forever.* They wanted a cup of the ocean's underside, and a way to carry it home. They got a Kun.
 
-The Firstborn misunderstood it. They thought: *if we obtain enough Amṛta, we can become eternal.*
-
-They were wrong. Amṛta wasn't a substance. It was the regenerative principle of existence. You couldn't possess it. You could only **channel it**.
-
-And there was only one way to reach it.
+> The Order's Archivists maintain the harder reading, the one the hill-priests refuse to copy down: you cannot own the principle of renewal, you can only *lend yourself to it*. Everybody thinks Amṛta granted deathlessness. The real transaction ran the other way.

@@ -7,37 +7,16 @@ quote: "The poison was not a punishment. It was an apology the ocean did not kno
 author: Ayat, Keeper of the Seeping Wells
 ---
 
-The Churning dragged upward everything reality had **rejected**:
+Nobody in Mandara's ranks had a jar for what came up second. It oozed over the table and into the cups they had ready for it: Hālāhala.
 
-- every dead possibility
-- every failed creation
-- every discarded form
-- every forgotten memory
-- every possible world that had never been allowed to exist
+It was not poison in the kitchen-grinding sense — a dose, a stopper, a cure that is in someone else's hands. It was the ocean's *leftovers*. Every ending the world had ever executed — every failed garden, every kingdom that proposed a map and was then swept out of the room, every child who never got to be argued about, every story that was interrupted at exactly the wrong line — had been filed somewhere. The Churning pulled the files up out of the basement. **Hālāhala was the filing.**
 
-It had nowhere to go. So it began leaking into reality.
+And it had nowhere to be put back.
 
-# HĀLĀHALA
+## What it did, once it was in the air
 
-*The Poison.*
+You could not describe it afterward, which is how it knows how to find you back. Forests reached out of the ground overnight and found each other. Dead things came back bearing a note in a handwriting no one's mother wrote. Whole rivers reversed their opinion. A town in the southern reaches awoke one morning every winter and called the other seasons summer.
 
-## It was not evil
+The Order maintains that these were not attacks. They were *echoes* — the old possibility wars deferring to a new referee. Later generations named what rose out of them **monsters**, which is one way of being wrong.
 
-Hālāhala was the accumulated **entropy of reality** — the byproduct of every world that almost was.
-
-Where it touched, reality began creating things that should not exist:
-
-- forests grew overnight
-- animals changed
-- mountains moved
-- dead things returned incorrectly
-- people disappeared into shadows
-- entire regions became barren
-
-The world began producing **patterns**. And that is where monsters ultimately come from.
-
-## What traces remain
-
-Civilization still argues over what Hālāhala actually is. The scholarly consensus — such as it is:
-
-> Entropy does not destroy. It *rearranges*. Hālāhala is reality's memory of everything it refused to be.
+But some of it reached the corners of the world and simply *stained* them — no forests, no movement, no story. Only the flat, ink-toned notion that this place should not have been asked anything. These tracts became the Ashen Expanse, the Barren Lines, the map-edges of every Vāra's first audit. Hālāhala does not poison. It *refuses*, and the refusal has weight.

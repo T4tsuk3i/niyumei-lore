@@ -7,30 +7,12 @@ quote: "Light made things. Dark let them finish. Order kept the books."
 author: Primer of the Vallum Wardens
 ---
 
-From the First Ocean came the first distinction.
+Out of the nothing came the first difference, and the difference had two parents.
 
-# PRAKĀŚA
-**Light / revelation**
+**Prakāśa** — light, revelation, the moment a thing becomes *something you can see*. **Tamas** — darkness, obscuration, the moment a thing finishes being seen and returns to the general club of what is.
 
-And its opposite:
+They were not good and evil. That shorthand belongs to later cults, and every Temple Archivist knows it loses something. Prakāśa lets a thing be and stay be. Tamas gives it leave to end, to rot, to fall out of the census and into the telling. Prakāśa produces the name of a thing. Tamas lets the name retire.
 
-# TAMAS
-**Darkness / obscuration**
+Between them sat the law the early priests called **Ṛta** — order. Not a ledger, not a boss, not a god: a *cadence*. The agreement by which the day came out of the night, the wake out of the ship, and the ship, sooner or later, out of the water. As long as the exchange stayed even, the world could be *a world*. Ledger full, ledger cleared, and next page.
 
-## Neither was good or evil
-
-Prakāśa allowed things to exist, grow, remember and change.
-
-Tamas allowed things to end, decay, disappear and return to the unknown.
-
-Reality required both.
-
-## Ṛta
-
-The ancient philosophers called their balance:
-
-# ṚTA — cosmic order.
-
-As long as Prakāśa and Tamas remained balanced, reality remained stable.
-
-Then something happened.
+The moment it swerved, none of the old certainties knew what page they were on. Then came the Mahā-Manthana.
