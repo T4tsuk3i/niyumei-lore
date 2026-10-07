@@ -2,6 +2,9 @@
 title: Prakāśa and Tamas
 description: The first distinction, and the law of cosmic order
 order: 2
+age: The First Ocean
+quote: "Light made things. Dark let them finish. Order kept the books."
+author: Primer of the Vallum Wardens
 ---
 
 From the First Ocean came the first distinction.

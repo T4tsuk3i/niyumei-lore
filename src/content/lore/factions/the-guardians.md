@@ -2,6 +2,9 @@
 title: The Guardians
 description: Protectors of the sanctuary — they read the warnings literally and metaphorically
 order: 2
+age: The Present
+quote: "The rest is story."
+author: Census Creed of the Guardians
 ---
 
 The Guardians interpret the Order's oldest warnings *as metaphor* — and act on them anyway.

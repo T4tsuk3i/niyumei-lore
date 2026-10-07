@@ -2,6 +2,9 @@
 title: Hālāhala
 description: The poison that came out of the Churning — accumulated entropy
 order: 7
+age: The Churning
+quote: "The poison was not a punishment. It was an apology the ocean did not know how to say."
+author: Ayat, Keeper of the Seeping Wells
 ---
 
 The Churning dragged upward everything reality had **rejected**:

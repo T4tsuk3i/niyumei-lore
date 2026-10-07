@@ -2,6 +2,9 @@
 title: Vallum
 description: Those who withstand the altered world
 order: 2
+age: The Present
+quote: "Nothing reaches those who stand behind us."
+author: Oath of the Vallum
 ---
 
 Vallum are those who learned to withstand the altered world. Guards. Defenders. Wardens.

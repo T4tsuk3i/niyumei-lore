@@ -9,6 +9,9 @@ const lore = defineCollection({
       description: z.string().optional(),
       order: z.number().default(99),
       image: image().optional(),
+      age: z.string().default('The First Ocean'),
+      quote: z.string().optional(),
+      author: z.string().optional(),
     }),
 });
 

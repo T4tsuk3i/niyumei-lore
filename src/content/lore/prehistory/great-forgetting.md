@@ -3,6 +3,9 @@ title: The Great Forgetting
 description: Humanity didn't merely lose technology. It lost history.
 order: 6
 image: ../../../images/Moonlit Ruins of the Forgotten Library.png
+age: The Great Forgetting
+quote: "What we buried, we called sacred. What we could not bury, we called weather."
+author: Classic of the Middle Houses
 ---
 
 Humanity didn't merely lose technology. It lost **history**.

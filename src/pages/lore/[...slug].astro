@@ -17,7 +17,18 @@ const { Content } = await render(entry);
 
 <Layout title={entry.data.title} description={entry.data.description}>
   <h1>{entry.data.title}</h1>
+  <p class="meta" style="font-family:var(--sans);text-transform:uppercase;letter-spacing:0.15em;font-size:0.75rem;color:var(--accent-dim);margin-top:-1rem">
+    {entry.data.age} · {entry.id.split('/')[0]}
+  </p>
   {entry.data.description && <p class="description">{entry.data.description}</p>}
+  {
+    entry.data.quote && (
+      <blockquote class="epigraph">
+        “{entry.data.quote}”
+        {entry.data.author && <footer style="margin-top:0.5rem;font-size:0.9rem;color:var(--ink-dim)">— {entry.data.author}</footer>}
+      </blockquote>
+    )
+  }
   {
     entry.data.image && (
       <Image

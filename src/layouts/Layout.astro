@@ -11,14 +11,24 @@ const { title, description } = Astro.props;
 
 const lore = await getCollection('lore');
 
-// Group lore pages by their top-level folder (prehistory, world, ...)
-const sections = new Map<string, typeof lore>();
+// Group lore pages by Age, then sorted by order
+const AGE_ORDER = [
+  'The First Ocean',
+  'The Churning',
+  'The Drowning',
+  'The Great Forgetting',
+  'The Present',
+];
+const byAge = new Map<string, typeof lore>();
 for (const entry of lore) {
-  const section = entry.id.split('/')[0];
-  if (!sections.has(section)) sections.set(section, []);
-  sections.get(section)!.push(entry);
+  const age = entry.data.age;
+  if (!byAge.has(age)) byAge.set(age, []);
+  byAge.get(age)!.push(entry);
 }
-for (const list of sections.values()) {
+const ages = [...byAge.keys()].sort(
+  (a, b) => AGE_ORDER.indexOf(a) - AGE_ORDER.indexOf(b)
+);
+for (const list of byAge.values()) {
   list.sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 }
 ---
@@ -45,10 +55,10 @@ for (const list of sections.values()) {
           <a class="nav-top" href="/lore">The Archive</a>
           <a class="nav-top" href="/timeline">Timeline</a>
           {
-            [...sections.entries()].map(([section, entries]) => (
+            ages.map((age) => (
               <div class="nav-section">
-                <span class="nav-section-title">{section}</span>
-                {entries.map((entry) => (
+                <span class="nav-section-title">{age}</span>
+                {byAge.get(age)!.map((entry) => (
                   <a href={`/lore/${entry.id}`}>{entry.data.title}</a>
                 ))}
               </div>

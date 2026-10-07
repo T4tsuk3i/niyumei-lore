@@ -3,6 +3,9 @@ title: The Firstborn
 description: The beings that came before humanity
 order: 2
 image: ../../../images/Titans of the Flooded Void.png
+age: The First Ocean
+quote: "They did not make the light. They taught the dark to answer."
+author: Varna of the Choir, Fragment of the 4th Record
 ---
 
 The oldest civilizations told different stories about the beings that came before humanity.

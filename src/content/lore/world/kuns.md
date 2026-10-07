@@ -3,6 +3,9 @@ title: Kuns
 description: Scars left by the Churning — small bodies of water infused with Amṛta
 order: 1
 image: ../../../images/Bioluminescent Sanctuary Grotto.png
+age: The Drowning
+quote: "A Kun is not a pond. It is the world's scar that heals by giving."
+author: Sister Veya, Warden of the Glowing Wells
 ---
 
 The flood eventually receded, but small pockets of Amṛta had fallen into the world. Wherever they accumulated, life could survive.

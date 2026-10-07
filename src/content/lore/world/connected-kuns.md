@@ -2,6 +2,9 @@
 title: The Kuns Are Connected
 description: Thousands of nodes — and something beneath them
 order: 3
+age: The Present
+quote: "The wells are speaking. We have not asked what they say yet."
+author: Debrief of the Order, restricted
 ---
 
 Eventually the player discovers the truth that rearranges everything.

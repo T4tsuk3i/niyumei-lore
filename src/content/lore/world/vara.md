@@ -3,6 +3,9 @@ title: Vāra
 description: The hidden refuges — massive underground sanctuaries built around Kuns
 order: 2
 image: ../../../images/The Luminous Underground Sanctuary.png
+age: The Drowning
+quote: "We sealed the door against the sea. Later we forgot we had a door."
+author: Excavation Note, Vāra 12
 ---
 
 The survivors built **Vāra**. Not one. Hundreds.

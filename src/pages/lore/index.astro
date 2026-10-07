@@ -6,14 +6,24 @@ import mural from '../../images/Mystical Teal Wave-Ruin Mural.png';
 
 const lore = await getCollection('lore');
 
-const sections = new Map<string, typeof lore>();
+const AGE_ORDER = [
+  'The First Ocean',
+  'The Churning',
+  'The Drowning',
+  'The Great Forgetting',
+  'The Present',
+];
+const byAge = new Map<string, typeof lore>();
 for (const entry of lore) {
-  const section = entry.id.split('/')[0];
-  if (!sections.has(section)) sections.set(section, []);
-  sections.get(section)!.push(entry);
+  const age = entry.data.age;
+  if (!byAge.has(age)) byAge.set(age, []);
+  byAge.get(age)!.push(entry);
 }
-for (const list of sections.values()) {
-  list.sort((a, b) => a.data.order - b.data.order);
+const ages = [...byAge.keys()].sort(
+  (a, b) => AGE_ORDER.indexOf(a) - AGE_ORDER.indexOf(b)
+);
+for (const list of byAge.values()) {
+  list.sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 }
 ---
 
@@ -26,11 +36,11 @@ for (const list of sections.values()) {
   <h1>The Archive</h1>
   <p class="description">What remains of the world before the flood.</p>
   {
-    [...sections.entries()].map(([section, entries]) => (
+    ages.map((age) => (
       <section>
-        <h2 style="text-transform:capitalize">{section}</h2>
+        <h2 style="font-variant:small-caps">{age}</h2>
         <ul>
-          {entries.map((entry) => (
+          {byAge.get(age)!.map((entry) => (
             <li>
               <a href={`/lore/${entry.id}`}>{entry.data.title}</a>
               {entry.data.description && ` — ${entry.data.description}`}

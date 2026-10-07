@@ -3,6 +3,9 @@ title: Amṛta
 description: Potential itself — the regenerative principle of existence
 order: 3
 image: ../../../images/Celestial Seed in the Ruined Temple.png
+age: The First Ocean
+quote: "Amṛta is not deathless. You are. Amṛta only borrows you back."
+author: Sūtra of Varna, the Undying Fragment
 ---
 
 Eventually, the Firstborn discovered something within Ādi-Sāgara. A substance. Not merely immortality — it was **potential itself**. The ability for reality to renew itself.

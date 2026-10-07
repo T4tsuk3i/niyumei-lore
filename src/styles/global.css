@@ -140,6 +140,14 @@ blockquote {
   text-shadow: 0 0 24px rgba(110, 231, 200, 0.08);
 }
 
+blockquote.epigraph {
+  color: var(--ink);
+  font-size: 1.25rem;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(90deg, rgba(110, 231, 200, 0.06), transparent 70%);
+  border-radius: 0 8px 8px 0;
+}
+
 hr {
   border: none;
   border-top: 1px solid var(--rule);

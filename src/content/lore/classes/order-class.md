@@ -2,6 +2,9 @@
 title: Order Class
 description: Those who restore the altered world
 order: 3
+age: The Present
+quote: "What was broken can be made whole."
+author: Vow of the Order's Class
 ---
 
 The Order's class are those who learned to **restore** the altered world. Healers. Scholars. Ritualists. Keepers of knowledge.

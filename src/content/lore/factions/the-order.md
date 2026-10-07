@@ -2,6 +2,9 @@
 title: The Order
 description: The keepers of the oldest records — and their warnings
 order: 1
+age: The Present
+quote: "When the waters begin to move without wind, the Churning has awakened."
+author: Oldest Warning of the Order
 ---
 
 The Order knows more than ordinary people. But even the Order doesn't know everything.

@@ -2,6 +2,9 @@
 title: Regions of the World
 description: Where survivors scattered, and what each region became
 order: 4
+age: The Drowning
+quote: "Every map is a mercy. We draw the world as it could be survived."
+author: Karth, cartographer of the Order
 ---
 
 The flood receded, but the world was no longer Earth as humanity remembered. The continents had changed. The climate had changed. The oceans had changed.

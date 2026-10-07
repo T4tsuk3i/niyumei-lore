@@ -3,6 +3,9 @@ title: The Blue-Throated Guardian
 description: The being who contained Hālāhala — partially
 order: 4
 image: ../../../images/Cosmic Deity Rising from the Abyss.png
+age: The Churning
+quote: "I drank so that you might breathe. Do not thank me. Remember me."
+author: Last Testament of the Blue-Throated Guardian, Nīlakaṇṭha Cycle
 ---
 
 One of the Firstborn tried to contain Hālāhala.
