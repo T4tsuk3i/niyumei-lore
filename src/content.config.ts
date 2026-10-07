@@ -21,6 +21,7 @@ const timeline = defineCollection({
     title: z.string(),
     era: z.number(),
     summary: z.string().optional(),
+    link: z.string().optional(),
   }),
 });
 

@@ -17,8 +17,19 @@ const rendered = await Promise.all(
   {
     rendered.map(({ entry, Content }) => (
       <div class="timeline-entry">
-        <h2>{entry.data.title}</h2>
+        <h2>
+          {entry.data.link ? (
+            <a href={`/lore/${entry.data.link}`}>{entry.data.title}</a>
+          ) : (
+            entry.data.title
+          )}
+        </h2>
         {entry.data.summary && <p>{entry.data.summary}</p>}
+        {entry.data.link && (
+          <p style="margin-top:0.5rem;font-family:var(--sans);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.15em">
+            <a href={`/lore/${entry.data.link}`}>read entry →</a>
+          </p>
+        )}
         <Content />
       </div>
     ))
