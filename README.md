@@ -98,6 +98,10 @@ git branch -M main
 git push -u origin main
 ```
 
+## License
+
+All rights reserved — see [LICENSE.md](LICENSE.md).
+
 ## Feedback
 
 This site is read-only by design. Feedback belongs in GitHub Discussions or Discord, not in comments baked into the pages.
