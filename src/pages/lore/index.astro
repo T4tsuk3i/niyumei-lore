@@ -31,22 +31,37 @@ for (const list of byAge.values()) {
   <Image
     src={mural}
     alt="Mural of the Churning"
-    style="width:100%;max-width:42rem;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:8px;margin-bottom:2rem"
+    class="entry-hero"
   />
   <h1>The Archive</h1>
   <p class="description">What remains of the world before the flood.</p>
   {
     ages.map((age) => (
       <section>
-        <h2 style="font-variant:small-caps">{age}</h2>
-        <ul>
-          {byAge.get(age)!.map((entry) => (
-            <li>
-              <a href={`/lore/${entry.id}`}>{entry.data.title}</a>
-              {entry.data.description && ` — ${entry.data.description}`}
-            </li>
+        <h2>{age}</h2>
+        <div class="archive-grid">
+          {byAge.get(age)!.map((entry, i) => (
+            <a
+              href={`/lore/${entry.id}`}
+              class="archive-card"
+              style={`animation-delay:${0.05 * i}s`}
+            >
+              {entry.data.image ? (
+                <Image src={entry.data.image} alt="" />
+              ) : (
+                <div
+                  style="width:128px;height:84px;border-radius:8px;flex-shrink:0;background:linear-gradient(135deg,#0d1d2e,#14384a)"
+                  aria-hidden="true"
+                />
+              )}
+              <div>
+                <span class="card-age">{age}</span>
+                <h3>{entry.data.title}</h3>
+                {entry.data.description && <p>{entry.data.description}</p>}
+              </div>
+            </a>
           ))}
-        </ul>
+        </div>
       </section>
     ))
   }

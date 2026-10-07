@@ -34,43 +34,59 @@ const next = idx < all.length - 1 ? all[idx + 1] : null;
 ---
 
 <Layout title={entry.data.title} description={entry.data.description}>
+  {
+    entry.data.image && (
+      <Image class="entry-hero" src={entry.data.image} alt={entry.data.title} />
+    )
+  }
   <h1>{entry.data.title}</h1>
-  <p class="meta" style="font-family:var(--sans);text-transform:uppercase;letter-spacing:0.15em;font-size:0.75rem;color:var(--accent-dim);margin-top:-1rem">
-    {entry.data.age} · {entry.id.split('/')[0]}
-  </p>
+  <div class="chips">
+    <span class="chip age">{entry.data.age}</span>
+    <span class="chip">{entry.id.split('/')[0]}</span>
+  </div>
   {entry.data.description && <p class="description">{entry.data.description}</p>}
   {
     entry.data.quote && (
       <blockquote class="epigraph">
         “{entry.data.quote}”
-        {entry.data.author && <footer style="margin-top:0.5rem;font-size:0.9rem;color:var(--ink-dim)">— {entry.data.author}</footer>}
+        {entry.data.author && <footer>— {entry.data.author}</footer>}
       </blockquote>
     )
   }
-  {
-    entry.data.image && (
-      <Image
-        src={entry.data.image}
-        alt={entry.data.title}
-        style="width:100%;max-width:42rem;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:8px;margin-bottom:1.5rem"
-      />
-    )
-  }
-  <Content />
+  <div class="article-open">
+    <Content />
+  </div>
   <hr />
-  <p style="font-size:0.85rem;color:var(--ink-dim);font-family:var(--sans);text-transform:uppercase;letter-spacing:0.12em">
-    Category: {entry.data.age} · {entry.id.split('/')[0]}
-  </p>
-  <nav class="entry-nav" style="display:flex;justify-content:space-between;gap:2rem;margin-top:1rem">
+  <nav class="entry-nav">
     <div>
-      {prev && (
-        <a href={`/lore/${prev.id}`}>← {prev.data.title}</a>
-      )}
+      {
+        prev ? (
+          <a href={`/lore/${prev.id}`} class="prev">
+            ← Previous
+            <strong>{prev.data.title}</strong>
+          </a>
+        ) : (
+          <a href="/timeline">
+            ← Start of the archive
+            <strong>Timeline</strong>
+          </a>
+        )
+      }
     </div>
-    <div style="text-align:right">
-      {next && (
-        <a href={`/lore/${next.id}`}>{next.data.title} →</a>
-      )}
+    <div>
+      {
+        next ? (
+          <a href={`/lore/${next.id}`} class="next">
+            Next →
+            <strong>{next.data.title}</strong>
+          </a>
+        ) : (
+          <a href="/lore" class="next">
+            You have reached the present →
+            <strong>The Archive</strong>
+          </a>
+        )
+      }
     </div>
   </nav>
 </Layout>

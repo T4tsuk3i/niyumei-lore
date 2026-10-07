@@ -3,6 +3,15 @@ import '../styles/global.css';
 import { Image } from 'astro:assets';
 import heroImg from '../images/hero.png';
 import seal from '../images/Mystical Neon Wave Moon Emblem.png';
+
+// deterministic particle field
+const particles = Array.from({ length: 22 }, (_, i) => ({
+  left: `${(i * 47 + 13) % 100}%`,
+  size: `${2 + ((i * 7) % 3)}px`,
+  duration: `${12 + ((i * 5) % 11)}s`,
+  delay: `${(i * 1.7) % 14}s`,
+  opacity: 0.3 + ((i * 11) % 50) / 100,
+}));
 ---
 
 <!doctype html>
@@ -22,6 +31,14 @@ import seal from '../images/Mystical Neon Wave Moon Emblem.png';
   <body>
     <div class="landing">
       <Image class="landing-bg" src={heroImg} alt="" />
+      {
+        particles.map((p) => (
+          <span
+            class="particle"
+            style={`left:${p.left};width:${p.size};height:${p.size};animation:floatUp ${p.duration} ${p.delay} linear infinite;opacity:${p.opacity}`}
+          />
+        ))
+      }
       <div class="landing-inner">
         <Image class="landing-seal" src={seal} alt="Niyumei seal" />
         <h1>THE CHURNING</h1>
@@ -30,6 +47,7 @@ import seal from '../images/Mystical Neon Wave Moon Emblem.png';
         </p>
         <a class="begin" href="/lore">BEGIN</a>
       </div>
+      <span class="scroll-hint">▼ descend</span>
     </div>
   </body>
 </html>

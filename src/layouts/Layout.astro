@@ -8,6 +8,7 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+const path = Astro.url.pathname;
 
 const lore = await getCollection('lore');
 
@@ -40,6 +41,7 @@ for (const list of byAge.values()) {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title} — Niyumei Lore</title>
     {description && <meta name="description" content={description} />}
+    <link rel="icon" type="image/png" href="/seal.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -51,15 +53,25 @@ for (const list of byAge.values()) {
     <div class="page">
       <aside class="sidebar">
         <a class="site-title" href="/">NIYUMEI</a>
+        <span class="site-sub">an archive of the drowned world</span>
         <nav>
-          <a class="nav-top" href="/lore">The Archive</a>
-          <a class="nav-top" href="/timeline">Timeline</a>
+          <a class:list={['nav-top', { active: path.startsWith('/lore') }]} href="/lore">
+            The Archive
+          </a>
+          <a class:list={['nav-top', { active: path.startsWith('/timeline') }]} href="/timeline">
+            Timeline
+          </a>
           {
             ages.map((age) => (
               <div class="nav-section">
                 <span class="nav-section-title">{age}</span>
                 {byAge.get(age)!.map((entry) => (
-                  <a href={`/lore/${entry.id}`}>{entry.data.title}</a>
+                  <a
+                    href={`/lore/${entry.id}`}
+                    class:list={{ active: path === `/lore/${entry.id}/` || path === `/lore/${entry.id}` }}
+                  >
+                    {entry.data.title}
+                  </a>
                 ))}
               </div>
             ))
@@ -68,6 +80,13 @@ for (const list of byAge.values()) {
       </aside>
       <main class="content">
         <slot />
+        <footer class="page-footer">
+          <img src="/seal.png" alt="" />
+          <span>
+            Niyumei — an original dark-fantasy setting · All rights reserved ·
+            <a href="/">home</a>
+          </span>
+        </footer>
       </main>
     </div>
   </body>

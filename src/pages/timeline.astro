@@ -9,6 +9,9 @@ const entries = (await getCollection('timeline')).sort(
 const rendered = await Promise.all(
   entries.map(async (entry) => ({ entry, Content: (await render(entry)).Content }))
 );
+
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+const eraLabel = (era: number) => ROMAN[Math.round(era / 100) - 1] ?? String(era);
 ---
 
 <Layout title="Timeline">
@@ -17,6 +20,7 @@ const rendered = await Promise.all(
   {
     rendered.map(({ entry, Content }) => (
       <div class="timeline-entry">
+        <span class="era-label">Era {eraLabel(entry.data.era)}</span>
         <h2>
           {entry.data.link ? (
             <a href={`/lore/${entry.data.link}`}>{entry.data.title}</a>
