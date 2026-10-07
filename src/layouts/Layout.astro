@@ -1,93 +1,174 @@
 ---
-import '../styles/global.css';
-import { getCollection } from 'astro:content';
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Search from '../components/Search.astro';
+import SearchButton from '../components/SearchButton.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import { getLoreByAge, getNavPages, loreUrl } from '../lib/lore';
+import { SITE } from '../site.config';
+import seal from '../images/Mystical Neon Wave Moon Emblem.png';
 
 interface Props {
   title: string;
   description?: string;
+  image?: ImageMetadata;
+  /** The age the current page belongs to; its sidebar group starts expanded. */
+  currentAge?: string;
+  /** Use the full width for grids (the archive) instead of a reading column. */
+  wide?: boolean;
 }
 
-const { title, description } = Astro.props;
-const path = Astro.url.pathname;
+const { title, description, image, currentAge, wide = false } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) => path === href;
+const isUnder = (href: string) => path === href || path.startsWith(href + '/');
 
-const lore = await getCollection('lore');
-
-// Group lore pages by Age, then sorted by order
-const AGE_ORDER = [
-  'The First Ocean',
-  'The Churning',
-  'The Drowning',
-  'The Great Forgetting',
-  'The Present',
-];
-const byAge = new Map<string, typeof lore>();
-for (const entry of lore) {
-  const age = entry.data.age;
-  if (!byAge.has(age)) byAge.set(age, []);
-  byAge.get(age)!.push(entry);
-}
-const ages = [...byAge.keys()].sort(
-  (a, b) => AGE_ORDER.indexOf(a) - AGE_ORDER.indexOf(b)
-);
-for (const list of byAge.values()) {
-  list.sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
-}
+const ages = await getLoreByAge();
+const navPages = await getNavPages();
+const hasRail = Astro.slots.has('rail');
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title} — Niyumei Lore</title>
-    {description && <meta name="description" content={description} />}
-    <link rel="icon" type="image/png" href="/seal.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
+    <BaseHead title={title} description={description} image={image} />
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="topbar">
+      <button class="icon-btn" type="button" data-nav-open aria-controls="sidebar" aria-expanded="false" aria-label="Open navigation">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+        </svg>
+      </button>
+      <a class="topbar-brand" href="/">{SITE.title.toUpperCase()}</a>
+      <div class="topbar-actions">
+        <SearchButton variant="icon" />
+        <ThemeToggle class="icon-btn" />
+      </div>
+    </header>
+
     <div class="page">
-      <aside class="sidebar">
-        <a class="site-title" href="/">NIYUMEI</a>
-        <span class="site-sub">an archive of the drowned world</span>
-        <nav>
-          <a class:list={['nav-top', { active: path.startsWith('/lore') }]} href="/lore">
+      <aside class="sidebar" id="sidebar" aria-label="Archive navigation">
+        <div class="sidebar-head">
+          <a class="brand" href="/">
+            <Image src={seal} alt="" width={40} height={40} class="seal-img brand-seal" />
+            <span>
+              <span class="brand-title">{SITE.title.toUpperCase()}</span>
+              <span class="brand-sub">{SITE.tagline}</span>
+            </span>
+          </a>
+          <button class="icon-btn sidebar-close" type="button" data-nav-close aria-label="Close navigation">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+
+        <SearchButton />
+
+        <nav class="nav-primary" aria-label="Primary">
+          <a href="/lore" class:list={{ active: isActive('/lore') }} aria-current={isActive('/lore') ? 'page' : undefined}>
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 4.5h10.5L19 8v11.5H5z M15 4.5V8.5h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" /></svg>
             The Archive
           </a>
-          <a class:list={['nav-top', { active: path.startsWith('/timeline') }]} href="/timeline">
+          <a href="/timeline" class:list={{ active: isUnder('/timeline') }} aria-current={isActive('/timeline') ? 'page' : undefined}>
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3v18M12 7h5M12 12H7M12 17h5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>
             Timeline
           </a>
           {
-            ages.map((age) => (
-              <div class="nav-section">
-                <span class="nav-section-title">{age}</span>
-                {byAge.get(age)!.map((entry) => (
-                  <a
-                    href={`/lore/${entry.id}`}
-                    class:list={{ active: path === `/lore/${entry.id}/` || path === `/lore/${entry.id}` }}
-                  >
-                    {entry.data.title}
-                  </a>
-                ))}
-              </div>
+            navPages.map((p) => (
+              <a href={`/${p.id}`} class:list={{ active: isActive(`/${p.id}`) }} aria-current={isActive(`/${p.id}`) ? 'page' : undefined}>
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="7.5" fill="none" stroke="currentColor" stroke-width="1.5" /><circle cx="12" cy="12" r="1.6" fill="currentColor" /></svg>
+                {p.data.title}
+              </a>
             ))
           }
         </nav>
+
+        <nav class="nav-ages" aria-label="Lore by age">
+          {
+            ages.map((age) => (
+              <details open={!currentAge || currentAge === age.name}>
+                <summary>
+                  <span class="age-numeral">{age.numeral}</span>
+                  <span class="age-name">{age.name}</span>
+                  <svg class="chev" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </summary>
+                <ul>
+                  {age.entries.map((entry) => {
+                    const href = loreUrl(entry);
+                    return (
+                      <li>
+                        <a href={href} class:list={{ active: isActive(href) }} aria-current={isActive(href) ? 'page' : undefined}>
+                          {entry.data.title}
+                          {entry.data.draft && <span class="draft-tag">draft</span>}
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </details>
+            ))
+          }
+        </nav>
+
+        <div class="sidebar-foot">
+          <span>Theme</span>
+          <ThemeToggle class="pill-toggle" />
+        </div>
       </aside>
-      <main class="content">
-        <slot />
-        <footer class="page-footer">
-          <img src="/seal.png" alt="" />
-          <span>
-            Niyumei — an original dark-fantasy setting · All rights reserved ·
-            <a href="/">home</a>
-          </span>
-        </footer>
+      <div class="nav-backdrop" data-nav-close aria-hidden="true"></div>
+
+      <main id="main" class="main">
+        <slot name="hero" />
+        <div class:list={['main-inner', { 'has-rail': hasRail, wide }]}>
+          <div class="content">
+            <slot />
+          </div>
+          {hasRail && (
+            <aside class="rail">
+              <slot name="rail" />
+            </aside>
+          )}
+        </div>
+        <Footer />
       </main>
     </div>
+
+    <Search />
+
+    <script>
+      // ── mobile drawer ──
+      const body = document.body;
+      const openBtn = document.querySelector<HTMLButtonElement>('[data-nav-open]');
+      const setOpen = (open: boolean) => {
+        body.classList.toggle('nav-open', open);
+        openBtn?.setAttribute('aria-expanded', String(open));
+      };
+      openBtn?.addEventListener('click', () => setOpen(true));
+      document.querySelectorAll('[data-nav-close]').forEach((el) => el.addEventListener('click', () => setOpen(false)));
+      document.addEventListener('keydown', (e) => e.key === 'Escape' && setOpen(false));
+
+      // ── keep the sidebar's scroll position between pages ──
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar) {
+        try {
+          const saved = sessionStorage.getItem('sidebar-scroll');
+          if (saved) sidebar.scrollTop = Number(saved);
+        } catch {}
+        const current = sidebar.querySelector<HTMLElement>('.nav-ages a.active');
+        if (current) {
+          const top = current.offsetTop, view = sidebar.scrollTop;
+          if (top < view || top > view + sidebar.clientHeight - 60) sidebar.scrollTop = top - sidebar.clientHeight / 3;
+        }
+        addEventListener('pagehide', () => {
+          try { sessionStorage.setItem('sidebar-scroll', String(sidebar.scrollTop)); } catch {}
+        });
+      }
+    </script>
   </body>
 </html>

@@ -1,41 +1,76 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
 import { getCollection, render } from 'astro:content';
+import { getLore, loreUrl } from '../lib/lore';
+import { AGES } from '../site.config';
 
-const entries = (await getCollection('timeline')).sort(
-  (a, b) => a.data.era - b.data.era
+const lore = await getLore();
+const byId = new Map(lore.map((e) => [e.id, e]));
+
+const beats = await Promise.all(
+  (await getCollection('timeline'))
+    .sort((a, b) => a.data.era - b.data.era)
+    .map(async (beat) => {
+      const linked = beat.data.link ? byId.get(beat.data.link) : undefined;
+      return { beat, linked, Content: (await render(beat)).Content, hasBody: !!beat.body?.trim() };
+    })
 );
 
-const rendered = await Promise.all(
-  entries.map(async (entry) => ({ entry, Content: (await render(entry)).Content }))
-);
-
-const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV'];
 const eraLabel = (era: number) => ROMAN[Math.round(era / 100) - 1] ?? String(era);
+// Show an age marker whenever the linked entry moves into a new age.
+let lastAge = '';
 ---
 
-<Layout title="Timeline">
-  <h1>Timeline</h1>
-  <p class="description">The memories of the world, in the order they were lost.</p>
-  {
-    rendered.map(({ entry, Content }) => (
-      <div class="timeline-entry">
-        <span class="era-label">Era {eraLabel(entry.data.era)}</span>
-        <h2>
-          {entry.data.link ? (
-            <a href={`/lore/${entry.data.link}`}>{entry.data.title}</a>
-          ) : (
-            entry.data.title
-          )}
-        </h2>
-        {entry.data.summary && <p>{entry.data.summary}</p>}
-        {entry.data.link && (
-          <p style="margin-top:0.5rem;font-family:var(--sans);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.15em">
-            <a href={`/lore/${entry.data.link}`}>read entry →</a>
-          </p>
-        )}
-        <Content />
-      </div>
-    ))
-  }
+<Layout title="Timeline" description="The memories of the world, in the order they were lost." wide>
+  <header class="plain-hero">
+    <p class="eyebrow">{beats.length} eras</p>
+    <h1>Timeline</h1>
+    <p class="entry-lede">The memories of the world, in the order they were lost.</p>
+  </header>
+
+  <ol class="timeline">
+    {
+      beats.map(({ beat, linked, Content, hasBody }) => {
+        const age = linked?.data.age;
+        const marker = age && age !== lastAge ? AGES.find((a) => a.name === age) : undefined;
+        if (age) lastAge = age;
+        return (
+          <>
+            {marker && (
+              <li class="timeline-age" aria-hidden="true">
+                <span>{marker.numeral}</span> {marker.name}
+              </li>
+            )}
+            <li class="timeline-beat" id={beat.id}>
+              <span class="timeline-dot" aria-hidden="true" />
+              <div class="timeline-card">
+                <div class="timeline-text">
+                  <span class="eyebrow">Era {eraLabel(beat.data.era)}</span>
+                  <h2>{linked ? <a href={loreUrl(linked)}>{beat.data.title}</a> : beat.data.title}</h2>
+                  {beat.data.summary && <p class="timeline-summary">{beat.data.summary}</p>}
+                  {hasBody && (
+                    <div class="timeline-body">
+                      <Content />
+                    </div>
+                  )}
+                  {linked && (
+                    <a class="timeline-link" href={loreUrl(linked)}>
+                      Read: {linked.data.title} →
+                    </a>
+                  )}
+                </div>
+                {linked?.data.image && (
+                  <a class="timeline-art" href={loreUrl(linked)} tabindex="-1" aria-hidden="true">
+                    <Image src={linked.data.image} alt="" widths={[320, 560]} sizes="240px" />
+                  </a>
+                )}
+              </div>
+            </li>
+          </>
+        );
+      })
+    }
+  </ol>
 </Layout>

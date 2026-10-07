@@ -1,92 +1,179 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
-import { getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
+import {
+  ageNumeral,
+  getLore,
+  loreUrl,
+  readingMinutes,
+  sectionKey,
+  sectionName,
+  transitionName,
+  type LoreEntry,
+} from '../../lib/lore';
+import seal from '../../images/Mystical Neon Wave Moon Emblem.png';
 
 export async function getStaticPaths() {
-  const lore = await getCollection('lore');
-  return lore.map((entry) => ({
+  const lore = await getLore();
+  return lore.map((entry, i) => ({
     params: { slug: entry.id },
-    props: { entry },
+    props: { entry, prev: lore[i - 1] ?? null, next: lore[i + 1] ?? null, all: lore },
   }));
 }
 
-const { entry } = Astro.props;
-const { Content } = await render(entry);
+interface Props {
+  entry: LoreEntry;
+  prev: LoreEntry | null;
+  next: LoreEntry | null;
+  all: LoreEntry[];
+}
 
-// Flat, chronological order across every age → for prev/next
-const AGE_ORDER = [
-  'The First Ocean',
-  'The Churning',
-  'The Drowning',
-  'The Great Forgetting',
-  'The Present',
-];
-const all = await getCollection('lore');
-all.sort(
-  (a, b) =>
-    AGE_ORDER.indexOf(a.data.age) - AGE_ORDER.indexOf(b.data.age) ||
-    (a.data.order ?? 99) - (b.data.order ?? 99)
-);
-const idx = all.findIndex((e) => e.id === entry.id);
-const prev = idx > 0 ? all[idx - 1] : null;
-const next = idx < all.length - 1 ? all[idx + 1] : null;
+const { entry, prev, next, all } = Astro.props;
+const { Content, headings } = await render(entry);
+const { title, description, image, age, quote, author, draft } = entry.data;
+const section = sectionKey(entry);
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const related = all.filter((e) => e.data.age === age && e.id !== entry.id).slice(0, 5);
+const minutes = readingMinutes(entry.body);
 ---
 
-<Layout title={entry.data.title} description={entry.data.description}>
-  {
-    entry.data.image && (
-      <Image class="entry-hero" src={entry.data.image} alt={entry.data.title} />
-    )
-  }
-  <h1>{entry.data.title}</h1>
-  <div class="chips">
-    <span class="chip age">{entry.data.age}</span>
-    <span class="chip">{entry.id.split('/')[0]}</span>
-  </div>
-  {entry.data.description && <p class="description">{entry.data.description}</p>}
-  {
-    entry.data.quote && (
-      <blockquote class="epigraph">
-        “{entry.data.quote}”
-        {entry.data.author && <footer>— {entry.data.author}</footer>}
-      </blockquote>
-    )
-  }
-  <div class="article-open">
-    <Content />
-  </div>
-  <hr />
-  <nav class="entry-nav">
-    <div>
-      {
-        prev ? (
-          <a href={`/lore/${prev.id}`} class="prev">
-            ← Previous
-            <strong>{prev.data.title}</strong>
-          </a>
-        ) : (
-          <a href="/timeline">
-            ← Start of the archive
-            <strong>Timeline</strong>
-          </a>
-        )
-      }
+<Layout title={title} description={description} image={image} currentAge={age}>
+  <header slot="hero" class:list={['entry-hero', { 'no-art': !image }]}>
+    {
+      image ? (
+        <Image
+          src={image}
+          alt=""
+          widths={[800, 1200, 1600]}
+          quality={72}
+          sizes="(max-width: 900px) 100vw, 75vw"
+          class="entry-hero-art"
+          loading="eager"
+          fetchpriority="high"
+          data-vt={transitionName(entry)}
+        />
+      ) : (
+        <Image src={seal} alt="" width={420} class="entry-hero-watermark seal-img" />
+      )
+    }
+    <div class="entry-hero-text">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/lore">Archive</a>
+        <span aria-hidden="true">/</span>
+        <a href={`/lore?section=${section}`}>{sectionName(section)}</a>
+      </nav>
+      <h1>{title}</h1>
+      {description && <p class="entry-lede">{description}</p>}
+      <div class="chips">
+        <span class="chip chip-accent">
+          <span class="chip-numeral">{ageNumeral(age)}</span>
+          {age}
+        </span>
+        <span class="chip">{sectionName(section)}</span>
+        <span class="chip">{minutes} min read</span>
+        {draft && <span class="chip chip-warn">Draft</span>}
+      </div>
     </div>
-    <div>
-      {
-        next ? (
-          <a href={`/lore/${next.id}`} class="next">
-            Next →
-            <strong>{next.data.title}</strong>
-          </a>
-        ) : (
-          <a href="/lore" class="next">
-            You have reached the present →
-            <strong>The Archive</strong>
-          </a>
-        )
-      }
+  </header>
+
+  <div class="reading-progress" aria-hidden="true"></div>
+
+  <article class="prose">
+    {
+      quote && (
+        <blockquote class="epigraph">
+          <p>{quote}</p>
+          {author && <footer>{author}</footer>}
+        </blockquote>
+      )
+    }
+    <div class="article-body">
+      <Content />
     </div>
+  </article>
+
+  <nav class="entry-nav" aria-label="Continue reading">
+    {
+      prev ? (
+        <a href={loreUrl(prev)} class="entry-nav-card prev">
+          <span class="entry-nav-dir">← Previous</span>
+          <strong>{prev.data.title}</strong>
+          <span class="entry-nav-age">{prev.data.age}</span>
+        </a>
+      ) : (
+        <a href="/timeline" class="entry-nav-card prev">
+          <span class="entry-nav-dir">← Before the beginning</span>
+          <strong>The Timeline</strong>
+          <span class="entry-nav-age">Every era, in order</span>
+        </a>
+      )
+    }
+    {
+      next ? (
+        <a href={loreUrl(next)} class="entry-nav-card next">
+          <span class="entry-nav-dir">Next →</span>
+          <strong>{next.data.title}</strong>
+          <span class="entry-nav-age">{next.data.age}</span>
+        </a>
+      ) : (
+        <a href="/lore" class="entry-nav-card next">
+          <span class="entry-nav-dir">You have reached the present →</span>
+          <strong>The Archive</strong>
+          <span class="entry-nav-age">Everything recorded so far</span>
+        </a>
+      )
+    }
   </nav>
+
+  <Fragment slot="rail">
+    {
+      toc.length > 0 && (
+        <div class="rail-block toc">
+          <h2 class="rail-title">On this page</h2>
+          <ul>
+            {toc.map((h) => (
+              <li class={`depth-${h.depth}`}>
+                <a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+    {
+      related.length > 0 && (
+        <div class="rail-block">
+          <h2 class="rail-title">Also in {age}</h2>
+          <ul class="rail-related">
+            {related.map((e) => (
+              <li>
+                <a href={loreUrl(e)}>
+                  {e.data.title}
+                  {e.data.description && <span>{e.data.description}</span>}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+  </Fragment>
 </Layout>
+
+<script>
+  // Highlight the section currently being read in "On this page".
+  const links = new Map(
+    [...document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')].map((a) => [a.dataset.tocLink!, a])
+  );
+  if (links.size) {
+    const headings = [...links.keys()].map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    const onScroll = () => {
+      let current = headings[0]?.id;
+      for (const h of headings) if (h.getBoundingClientRect().top < innerHeight * 0.3) current = h.id;
+      links.forEach((a, id) => a.classList.toggle('active', id === current));
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+</script>

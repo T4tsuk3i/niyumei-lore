@@ -1,0 +1,166 @@
+---
+// The search dialog. Render once per page; any element with
+// data-search-open (see SearchButton.astro) opens it.
+---
+
+<dialog class="search-dialog" data-search-dialog aria-label="Search the archive">
+  <div class="search-box">
+    <div class="search-input-row">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+        <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.7" />
+        <path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+      </svg>
+      <input
+        type="search"
+        placeholder="Search names, places, events…"
+        autocomplete="off"
+        spellcheck="false"
+        data-search-input
+        aria-controls="search-results"
+      />
+      <kbd class="search-kbd">esc</kbd>
+    </div>
+    <ul class="search-results" id="search-results" role="listbox" data-search-results></ul>
+    <p class="search-empty" data-search-empty hidden>Nothing surfaces. The record is silent on that.</p>
+  </div>
+</dialog>
+
+<script>
+  type Doc = { url: string; title: string; kind: string; meta: string; description: string; text: string };
+
+  const dialog = document.querySelector<HTMLDialogElement>('[data-search-dialog]');
+  const input = document.querySelector<HTMLInputElement>('[data-search-input]');
+  const list = document.querySelector<HTMLUListElement>('[data-search-results]');
+  const empty = document.querySelector<HTMLElement>('[data-search-empty]');
+
+  let docs: Doc[] | null = null;
+  let active = 0;
+
+  // Search ignores case and diacritics: "amrta" finds "Amṛta".
+  const fold = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const esc = (s: string) =>
+    s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+
+  // Highlight terms in the original text by mapping matches found in the folded copy.
+  // Folding NFD + stripping marks keeps a 1:1 length only per base char, so map index by index.
+  function highlight(text: string, terms: string[]) {
+    const chars = [...text];
+    const folded = chars.map((c) => fold(c) || c);
+    const flat = folded.join('');
+    const marks = new Array(chars.length).fill(false);
+    // build an index from flat-string offset → char index
+    const owner: number[] = [];
+    folded.forEach((f, i) => { for (let k = 0; k < f.length; k++) owner.push(i); });
+    for (const t of terms) {
+      let from = 0, at;
+      while (t && (at = flat.indexOf(t, from)) !== -1) {
+        for (let k = at; k < at + t.length; k++) marks[owner[k]] = true;
+        from = at + t.length;
+      }
+    }
+    let out = '', open = false;
+    chars.forEach((c, i) => {
+      if (marks[i] && !open) { out += '<mark>'; open = true; }
+      if (!marks[i] && open) { out += '</mark>'; open = false; }
+      out += esc(c);
+    });
+    return open ? out + '</mark>' : out;
+  }
+
+  function snippet(doc: Doc, terms: string[]) {
+    const source = doc.text || doc.description;
+    const f = fold(source);
+    let at = -1;
+    for (const t of terms) { at = f.indexOf(t); if (at !== -1) break; }
+    if (at === -1) return highlight(doc.description || source.slice(0, 140), terms);
+    let start = Math.max(0, at - 60);
+    let end = Math.min(source.length, at + 110);
+    // snap to whole words
+    if (start > 0) start = source.indexOf(' ', start) + 1 || start;
+    if (end < source.length) end = source.lastIndexOf(' ', end) > at ? source.lastIndexOf(' ', end) : end;
+    return (start > 0 ? '… ' : '') + highlight(source.slice(start, end), terms) + (end < source.length ? ' …' : '');
+  }
+
+  function search(q: string) {
+    if (!docs || !list || !empty) return;
+    const terms = fold(q).split(/\s+/).filter(Boolean);
+    if (!terms.length) {
+      list.innerHTML = '';
+      empty.hidden = true;
+      return;
+    }
+    const scored = docs
+      .map((d) => {
+        const title = fold(d.title), desc = fold(d.description), text = fold(d.text);
+        let score = 0;
+        for (const t of terms) {
+          const s = (title.includes(t) ? 10 : 0) + (title.startsWith(t) ? 5 : 0) + (desc.includes(t) ? 3 : 0) + (text.includes(t) ? 1 : 0);
+          if (!s) return null; // every term must match somewhere
+          score += s;
+        }
+        return { d, score };
+      })
+      .filter((x): x is { d: Doc; score: number } => !!x)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 12);
+
+    active = 0;
+    empty.hidden = scored.length > 0;
+    list.innerHTML = scored
+      .map(({ d }, i) => `
+        <li role="option" aria-selected="${i === 0}">
+          <a href="${esc(d.url)}">
+            <span class="sr-kind">${esc(d.kind)}${d.meta ? ` · ${esc(d.meta)}` : ''}</span>
+            <span class="sr-title">${highlight(d.title, terms)}</span>
+            <span class="sr-snippet">${snippet(d, terms)}</span>
+          </a>
+        </li>`)
+      .join('');
+  }
+
+  function setActive(i: number) {
+    const items = list ? [...list.children] : [];
+    if (!items.length) return;
+    active = (i + items.length) % items.length;
+    items.forEach((el, k) => el.setAttribute('aria-selected', String(k === active)));
+    items[active].scrollIntoView({ block: 'nearest' });
+  }
+
+  async function open() {
+    if (!dialog || !input) return;
+    if (!dialog.open) dialog.showModal();
+    input.select();
+    if (!docs) {
+      try {
+        docs = await (await fetch('/search.json')).json();
+      } catch {
+        docs = [];
+      }
+      search(input.value);
+    }
+  }
+
+  document.querySelectorAll('[data-search-open]').forEach((b) => b.addEventListener('click', open));
+
+  document.addEventListener('keydown', (e) => {
+    const typing = e.target instanceof HTMLElement && e.target.closest('input, textarea, [contenteditable]');
+    if ((e.key === 'k' && (e.metaKey || e.ctrlKey)) || (e.key === '/' && !typing)) {
+      e.preventDefault();
+      open();
+    }
+  });
+
+  input?.addEventListener('input', () => search(input.value));
+  input?.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActive(active + 1); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); setActive(active - 1); }
+    if (e.key === 'Enter') {
+      const link = list?.children[active]?.querySelector('a');
+      if (link) { e.preventDefault(); link.click(); }
+    }
+  });
+
+  // click on the backdrop closes
+  dialog?.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
+  list?.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) dialog?.close(); });
+</script>

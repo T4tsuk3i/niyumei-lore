@@ -1,9 +1,10 @@
-// Compile every lore entry into a single snapshot md
-const fs = require('fs');
-const path = require('path');
+// Compile every lore entry into a single snapshot: lore-now.md
+// Run with: bun run compile
+import fs from 'node:fs';
+import path from 'node:path';
+import { AGES } from './src/site.config.ts';
 
 const base = 'src/content/lore';
-const AGE_ORDER = ['The First Ocean', 'The Churning', 'The Drowning', 'The Great Forgetting', 'The Present'];
 
 function walk(dir) {
   let out = [];
@@ -15,9 +16,9 @@ function walk(dir) {
   return out;
 }
 
-// naive frontmatter parser
+// naive frontmatter parser (handles Windows line endings)
 function parse(text) {
-  const m = text.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+  const m = text.replace(/\r\n/g, '\n').match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
   if (!m) return { meta: {}, body: text };
   const meta = {};
   for (const line of m[1].split('\n')) {
@@ -27,15 +28,17 @@ function parse(text) {
   return { meta, body: m[2].trim() };
 }
 
-const entries = walk(base).map((p) => {
-  const { meta, body } = parse(fs.readFileSync(p, 'utf8'));
-  meta.file = p.replace(/\\/g, '/').replace('src/content/lore/', '');
-  return { meta, body };
-});
+const entries = walk(base)
+  .map((p) => {
+    const { meta, body } = parse(fs.readFileSync(p, 'utf8'));
+    meta.file = p.replace(/\\/g, '/').replace(`${base}/`, '');
+    return { meta, body };
+  })
+  .filter((e) => e.meta.draft !== 'true');
 
 const byAge = {};
 for (const e of entries) {
-  const age = e.meta.age || 'The First Ocean';
+  const age = e.meta.age || AGES[0].name;
   (byAge[age] = byAge[age] || []).push(e);
 }
 for (const age of Object.keys(byAge)) {
@@ -45,10 +48,10 @@ for (const age of Object.keys(byAge)) {
 let out = `# Niyumei — Complete Lore (current state)\n\n`;
 out += `Compiled ${new Date().toISOString().slice(0, 10)} from src/content/lore/. Drop lore-update.md in the repo root with new/changed entries and ask me to sync.\n\n`;
 
-for (const age of AGE_ORDER) {
-  if (!byAge[age]) continue;
-  out += `---\n\n# ${age}\n\n`;
-  for (const e of byAge[age]) {
+for (const { name } of AGES) {
+  if (!byAge[name]) continue;
+  out += `---\n\n# ${name}\n\n`;
+  for (const e of byAge[name]) {
     out += `## ${e.meta.title}\n\n`;
     if (e.meta.description) out += `*${e.meta.description}*\n\n`;
     if (e.meta.quote) out += `> “${e.meta.quote}”\n> — ${e.meta.author}\n\n`;

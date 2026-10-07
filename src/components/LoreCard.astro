@@ -1,0 +1,43 @@
+---
+import { Image } from 'astro:assets';
+import { ageNumeral, loreUrl, sectionKey, sectionName, transitionName, type LoreEntry } from '../lib/lore';
+
+interface Props {
+  entry: LoreEntry;
+  /** Show the age on the card (useful outside the age-grouped archive). */
+  showAge?: boolean;
+}
+
+const { entry, showAge = false } = Astro.props;
+const { title, description, image, age, draft } = entry.data;
+const section = sectionKey(entry);
+---
+
+<a href={loreUrl(entry)} class="lore-card" data-section={section}>
+  <div class="lore-card-art">
+    {
+      image ? (
+        <Image
+          src={image}
+          alt=""
+          widths={[400, 700]}
+          quality={72}
+          sizes="(max-width: 700px) 100vw, 360px"
+          data-vt={transitionName(entry)}
+        />
+      ) : (
+        <div class="lore-card-placeholder" aria-hidden="true">
+          <span>{ageNumeral(age)}</span>
+        </div>
+      )
+    }
+  </div>
+  <div class="lore-card-body">
+    <span class="lore-card-kind">
+      {sectionName(section)}{showAge && ` · ${age}`}
+      {draft && <span class="draft-tag">draft</span>}
+    </span>
+    <h3>{title}</h3>
+    {description && <p>{description}</p>}
+  </div>
+</a>

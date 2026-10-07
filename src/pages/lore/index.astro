@@ -1,68 +1,71 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import LoreCard from '../../components/LoreCard.astro';
 import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
+import { getLore, getLoreByAge, sectionKey, sectionName } from '../../lib/lore';
 import mural from '../../images/Mystical Teal Wave-Ruin Mural.png';
 
-const lore = await getCollection('lore');
-
-const AGE_ORDER = [
-  'The First Ocean',
-  'The Churning',
-  'The Drowning',
-  'The Great Forgetting',
-  'The Present',
-];
-const byAge = new Map<string, typeof lore>();
-for (const entry of lore) {
-  const age = entry.data.age;
-  if (!byAge.has(age)) byAge.set(age, []);
-  byAge.get(age)!.push(entry);
-}
-const ages = [...byAge.keys()].sort(
-  (a, b) => AGE_ORDER.indexOf(a) - AGE_ORDER.indexOf(b)
-);
-for (const list of byAge.values()) {
-  list.sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
-}
+const ages = await getLoreByAge();
+const lore = await getLore();
+const sections = [...new Set(lore.map(sectionKey))];
 ---
 
-<Layout title="The Archive">
-  <Image
-    src={mural}
-    alt="Mural of the Churning"
-    class="entry-hero"
-  />
-  <h1>The Archive</h1>
-  <p class="description">What remains of the world before the flood.</p>
+<Layout title="The Archive" description="Every recorded fragment of the drowned world, gathered by age." image={mural} wide>
+  <header slot="hero" class="page-hero wide">
+    <Image src={mural} alt="" widths={[800, 1200, 1600]} quality={72} sizes="(max-width: 900px) 100vw, 75vw" class="page-hero-art" loading="eager" />
+    <div class="page-hero-text">
+      <p class="eyebrow">{lore.length} fragments · {ages.length} ages</p>
+      <h1>The Archive</h1>
+      <p class="entry-lede">What remains of the world before the flood, and what grew in its wake.</p>
+    </div>
+  </header>
+
+  <div class="filter-bar" role="toolbar" aria-label="Filter by section">
+    <button type="button" class="filter-chip" data-filter="all" aria-pressed="true">All</button>
+    {
+      sections.map((s) => (
+        <button type="button" class="filter-chip" data-filter={s} aria-pressed="false">
+          {sectionName(s)}
+        </button>
+      ))
+    }
+  </div>
+
   {
     ages.map((age) => (
-      <section>
-        <h2>{age}</h2>
-        <div class="archive-grid">
-          {byAge.get(age)!.map((entry, i) => (
-            <a
-              href={`/lore/${entry.id}`}
-              class="archive-card"
-              style={`animation-delay:${0.05 * i}s`}
-            >
-              {entry.data.image ? (
-                <Image src={entry.data.image} alt="" />
-              ) : (
-                <div
-                  style="width:128px;height:84px;border-radius:8px;flex-shrink:0;background:linear-gradient(135deg,#0d1d2e,#14384a)"
-                  aria-hidden="true"
-                />
-              )}
-              <div>
-                <span class="card-age">{age}</span>
-                <h3>{entry.data.title}</h3>
-                {entry.data.description && <p>{entry.data.description}</p>}
-              </div>
-            </a>
+      <section class="age-group" data-age-group>
+        <header class="age-group-head">
+          <span class="age-group-numeral">{age.numeral}</span>
+          <div>
+            <h2>{age.name}</h2>
+            <p>{age.blurb}</p>
+          </div>
+        </header>
+        <div class="card-grid">
+          {age.entries.map((entry) => (
+            <LoreCard entry={entry} />
           ))}
         </div>
       </section>
     ))
   }
 </Layout>
+
+<script>
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+  const cards = [...document.querySelectorAll<HTMLElement>('[data-section]')];
+  const groups = [...document.querySelectorAll<HTMLElement>('[data-age-group]')];
+
+  function apply(filter: string) {
+    if (!chips.some((c) => c.dataset.filter === filter)) filter = 'all';
+    chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.filter === filter)));
+    cards.forEach((c) => (c.hidden = filter !== 'all' && c.dataset.section !== filter));
+    groups.forEach((g) => (g.hidden = !g.querySelector('[data-section]:not([hidden])')));
+    const url = new URL(location.href);
+    filter === 'all' ? url.searchParams.delete('section') : url.searchParams.set('section', filter);
+    history.replaceState(null, '', url);
+  }
+
+  chips.forEach((c) => c.addEventListener('click', () => apply(c.dataset.filter!)));
+  apply(new URLSearchParams(location.search).get('section') ?? 'all');
+</script>

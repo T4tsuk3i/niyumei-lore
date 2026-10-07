@@ -1,0 +1,52 @@
+---
+// Copy and download deterrents, plus small page wiring that has to live in JS
+// so the site can run under a strict Content Security Policy.
+//
+// Honest caveat: anything a browser can display, a determined person can capture
+// (screenshots, dev tools). This stops casual copying, saving, dragging and printing.
+---
+
+<script>
+  import { SITE } from '../site.config';
+
+  // Image morph names between pages (kept out of inline style="" for the CSP).
+  document.querySelectorAll<HTMLElement>('[data-vt]').forEach((el) => {
+    el.style.setProperty('view-transition-name', el.dataset.vt!);
+  });
+
+  const editable = (t: EventTarget | null) =>
+    t instanceof HTMLElement && !!t.closest('input, textarea, [contenteditable="true"]');
+
+  const notice = `© ${new Date().getFullYear()} ${SITE.title}. All rights reserved. Read it at ${location.origin}`;
+
+  // No right-click menu (blocks "Save image as…", "Copy image", "Inspect").
+  document.addEventListener('contextmenu', (e) => {
+    if (!editable(e.target)) e.preventDefault();
+  });
+
+  // Copying or cutting page text puts a notice on the clipboard instead.
+  for (const type of ['copy', 'cut'] as const) {
+    document.addEventListener(type, (e) => {
+      if (editable(e.target)) return;
+      e.preventDefault();
+      e.clipboardData?.setData('text/plain', notice);
+    });
+  }
+
+  // No dragging images or text out of the page, no selecting text.
+  document.addEventListener('dragstart', (e) => {
+    if (!editable(e.target)) e.preventDefault();
+  });
+  document.addEventListener('selectstart', (e) => {
+    if (!editable(e.target)) e.preventDefault();
+  });
+
+  // Save page, view source, print, select-all, copy.
+  document.addEventListener('keydown', (e) => {
+    const mod = e.ctrlKey || e.metaKey;
+    if (!mod) return;
+    const key = e.key.toLowerCase();
+    if (['s', 'u', 'p'].includes(key)) e.preventDefault();
+    if (['a', 'c', 'x'].includes(key) && !editable(e.target)) e.preventDefault();
+  });
+</script>

@@ -1,0 +1,62 @@
+---
+import '../styles/global.css';
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Protect from './Protect.astro';
+import { SITE } from '../site.config';
+import heroImg from '../images/hero.png';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: ImageMetadata;
+}
+
+const { title, description = SITE.description, image = heroImg } = Astro.props;
+const fullTitle = title ? `${title} · ${SITE.title}` : `${SITE.title}: ${SITE.tagline}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const og = await getImage({ src: image, width: 1200, format: 'jpeg', quality: 70 });
+const ogUrl = new URL(og.src, Astro.site);
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={SITE.title} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogUrl} />
+<meta name="twitter:card" content="summary_large_image" />
+<!-- Ask AI crawlers not to train on text or images (honoured by the ones that respect it). -->
+<meta name="robots" content="noai, noimageai" />
+
+<meta name="theme-color" content="#04080e" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#f2ede2" media="(prefers-color-scheme: light)" />
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap"
+  rel="stylesheet"
+/>
+
+<!-- Theme: set before first paint so there's no flash. Stored choice wins, otherwise follow the OS. -->
+<script is:inline>
+  (() => {
+    let theme;
+    try { theme = localStorage.getItem('theme'); } catch {}
+    if (theme !== 'light' && theme !== 'dark') {
+      theme = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    }
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+
+<Protect />

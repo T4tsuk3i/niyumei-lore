@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import seal from '../images/Mystical Neon Wave Moon Emblem.png';
+---
+
+<Layout title="Lost to the flood" description="This page is not in the record.">
+  <div class="not-found">
+    <Image src={seal} alt="" width={160} class="seal-img not-found-seal" />
+    <p class="eyebrow">404</p>
+    <h1>Lost to the flood</h1>
+    <p class="entry-lede">Whatever was written here has sunk below the Kun. Perhaps it was never recorded, or perhaps it was forgotten on purpose.</p>
+    <div class="not-found-actions">
+      <a class="btn btn-primary" href="/lore">Return to the archive</a>
+      <button class="btn btn-ghost" type="button" data-search-open>Search instead</button>
+    </div>
+  </div>
+</Layout>

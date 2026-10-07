@@ -1,0 +1,41 @@
+---
+// Renders every file in src/content/pages/ at /<filename>.
+import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import { getPages, type Page } from '../lib/lore';
+
+export async function getStaticPaths() {
+  const pages = await getPages();
+  return pages.map((page) => ({ params: { page: page.id }, props: { page } }));
+}
+
+const { page } = Astro.props as { page: Page };
+const { Content } = await render(page);
+const { title, description, image } = page.data;
+---
+
+<Layout title={title} description={description} image={image}>
+  {
+    image && (
+      <header slot="hero" class="page-hero">
+        <Image src={image} alt="" widths={[800, 1200, 1600]} quality={72} sizes="(max-width: 900px) 100vw, 75vw" class="page-hero-art" loading="eager" />
+        <div class="page-hero-text">
+          <h1>{title}</h1>
+          {description && <p class="entry-lede">{description}</p>}
+        </div>
+      </header>
+    )
+  }
+  {
+    !image && (
+      <header class="plain-hero">
+        <h1>{title}</h1>
+        {description && <p class="entry-lede">{description}</p>}
+      </header>
+    )
+  }
+  <article class="prose">
+    <Content />
+  </article>
+</Layout>

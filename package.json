@@ -3,8 +3,9 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview"
+    "build": "astro build && bun scripts/strip-originals.js",
+    "preview": "astro preview",
+    "compile": "bun compile-lore.js"
   },
   "dependencies": {
     "astro": "^5.13.0"

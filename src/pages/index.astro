@@ -1,53 +1,180 @@
 ---
-import '../styles/global.css';
 import { Image } from 'astro:assets';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import LoreCard from '../components/LoreCard.astro';
+import Search from '../components/Search.astro';
+import SearchButton from '../components/SearchButton.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import { getLore, getLoreByAge, getNavPages, loreUrl } from '../lib/lore';
+import { SITE } from '../site.config';
 import heroImg from '../images/hero.png';
 import seal from '../images/Mystical Neon Wave Moon Emblem.png';
 
-// deterministic particle field
-const particles = Array.from({ length: 22 }, (_, i) => ({
-  left: `${(i * 47 + 13) % 100}%`,
-  size: `${2 + ((i * 7) % 3)}px`,
-  duration: `${12 + ((i * 5) % 11)}s`,
-  delay: `${(i * 1.7) % 14}s`,
-  opacity: 0.3 + ((i * 11) % 50) / 100,
-}));
+const lore = await getLore();
+const ages = await getLoreByAge();
+const navPages = await getNavPages();
+const featured = lore.filter((e) => e.data.image).slice(0, 6);
+const quotes = lore
+  .filter((e) => e.data.quote && e.data.quote !== SITE.epigraph)
+  .map((e) => ({ text: e.data.quote!, author: e.data.author ?? '', href: loreUrl(e), title: e.data.title }));
+
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Niyumei — The Churning</title>
-    <link rel="icon" type="image/png" href="/seal.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
+    <BaseHead />
   </head>
-  <body>
-    <div class="landing">
-      <Image class="landing-bg" src={heroImg} alt="" />
-      {
-        particles.map((p) => (
-          <span
-            class="particle"
-            style={`left:${p.left};width:${p.size};height:${p.size};animation:floatUp ${p.duration} ${p.delay} linear infinite;opacity:${p.opacity}`}
-          />
-        ))
-      }
-      <div class="landing-inner">
-        <Image class="landing-seal" src={seal} alt="Niyumei seal" />
-        <h1>THE CHURNING</h1>
-        <p class="tagline">
-          "The sea did not rise. The world descended into it."
-        </p>
-        <a class="begin" href="/lore">BEGIN</a>
+  <body class="home">
+    <a class="skip-link" href="#ages">Skip to content</a>
+
+    <header class="cover-nav">
+      <a class="cover-brand" href="/">{SITE.title.toUpperCase()}</a>
+      <nav aria-label="Primary">
+        <a href="/lore">Archive</a>
+        <a href="/timeline">Timeline</a>
+        {navPages.map((p) => <a href={`/${p.id}`}>{p.data.title}</a>)}
+      </nav>
+      <div class="cover-actions">
+        <SearchButton variant="icon" />
+        <ThemeToggle class="icon-btn" />
       </div>
-      <span class="scroll-hint">▼ descend</span>
+    </header>
+
+    <section class="cover">
+      <Image class="cover-bg" src={heroImg} alt="" widths={[960, 1440, 1920]} quality={72} sizes="100vw" loading="eager" fetchpriority="high" />
+      <div class="cover-particles" aria-hidden="true" data-particles></div>
+      <div class="cover-inner">
+        <Image class="cover-seal seal-img" src={seal} alt={`${SITE.title} seal`} width={240} />
+        <p class="cover-eyebrow">{SITE.title}</p>
+        <h1>The Churning</h1>
+        <p class="cover-tagline">“{SITE.epigraph}”</p>
+        <div class="cover-ctas">
+          <a class="btn btn-primary" href={lore[0] ? loreUrl(lore[0]) : '/lore'}>Begin at the beginning</a>
+          <a class="btn btn-ghost" href="/lore">Browse the archive</a>
+        </div>
+      </div>
+      <a class="scroll-hint" href="#ages">
+        <span>descend</span>
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      </a>
+    </section>
+
+    <main>
+      <section class="home-section" id="ages">
+        <header class="section-head">
+          <p class="eyebrow">The record, in order</p>
+          <h2>Five ages of a drowned world</h2>
+        </header>
+        <ol class="ages-strip">
+          {
+            ages.map((age) => (
+              <li>
+                <a href={loreUrl(age.entries[0])} class="age-card">
+                  <span class="age-card-numeral">{age.numeral}</span>
+                  <h3>{age.name}</h3>
+                  <p>{age.blurb}</p>
+                  <span class="age-card-count">
+                    {age.entries.length} {age.entries.length === 1 ? 'entry' : 'entries'} →
+                  </span>
+                </a>
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+
+      {
+        quotes.length > 0 && (
+          <section class="quote-band" aria-label="From the record">
+            <figure data-quotes={JSON.stringify(quotes)}>
+              <blockquote>
+                <p data-quote-text>{quotes[0].text}</p>
+              </blockquote>
+              <figcaption>
+                <span data-quote-author>{quotes[0].author}</span>
+                <a data-quote-link href={quotes[0].href}>
+                  from <em data-quote-title>{quotes[0].title}</em>
+                </a>
+              </figcaption>
+            </figure>
+          </section>
+        )
+      }
+
+      <section class="home-section">
+        <header class="section-head row">
+          <div>
+            <p class="eyebrow">From the archive</p>
+            <h2>Fragments worth starting with</h2>
+          </div>
+          <a class="text-link" href="/lore">All {lore.length} entries →</a>
+        </header>
+        <div class="card-grid">
+          {featured.map((entry) => <LoreCard entry={entry} showAge />)}
+        </div>
+      </section>
+
+      <section class="home-section">
+        <a class="timeline-teaser" href="/timeline">
+          <div>
+            <p class="eyebrow">Chronology</p>
+            <h2>Walk the timeline</h2>
+            <p>From the First Ocean to a present where the water has started moving again. Every era, in the order it was lost.</p>
+          </div>
+          <span class="btn btn-ghost">Open timeline →</span>
+        </a>
+      </section>
+    </main>
+
+    <div class="home-footer">
+      <Footer />
     </div>
+
+    <Search />
+
+    <script>
+      // Particles are built here (not as inline styles) so the page works under a strict CSP.
+      const field = document.querySelector<HTMLElement>('[data-particles]');
+      if (field && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        for (let i = 0; i < 26; i++) {
+          const p = document.createElement('span');
+          const size = `${2 + ((i * 7) % 3)}px`;
+          p.className = 'particle';
+          Object.assign(p.style, {
+            left: `${(i * 47 + 13) % 100}%`,
+            width: size,
+            height: size,
+            animationDuration: `${12 + ((i * 5) % 11)}s`,
+            animationDelay: `${-((i * 1.7) % 14)}s`,
+          });
+          p.style.setProperty('--o', String(0.3 + ((i * 11) % 50) / 100));
+          field.append(p);
+        }
+      }
+
+      // Slowly cycle through the epigraphs of every entry.
+      const fig = document.querySelector<HTMLElement>('[data-quotes]');
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (fig && !reduce) {
+        const quotes: { text: string; author: string; href: string; title: string }[] = JSON.parse(fig.dataset.quotes!);
+        const $ = (s: string) => fig.querySelector<HTMLElement>(s)!;
+        let i = 0;
+        setInterval(() => {
+          if (document.hidden || fig.matches(':hover')) return;
+          fig.classList.add('fading');
+          setTimeout(() => {
+            i = (i + 1) % quotes.length;
+            const q = quotes[i];
+            $('[data-quote-text]').textContent = q.text;
+            $('[data-quote-author]').textContent = q.author;
+            $('[data-quote-title]').textContent = q.title;
+            ($('[data-quote-link]') as HTMLAnchorElement).href = q.href;
+            fig.classList.remove('fading');
+          }, 600);
+        }, 7000);
+      }
+    </script>
   </body>
 </html>
